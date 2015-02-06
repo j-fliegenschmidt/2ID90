@@ -1,8 +1,6 @@
 package nl.tue.s2id90.group41;
 
 
-import java.util.AbstractList;
-import java.util.ArrayList;
 import java.util.List;
 import nl.tue.s2id90.draughts.DraughtsState;
 import nl.tue.s2id90.draughts.player.DraughtsPlayer;
