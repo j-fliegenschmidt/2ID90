@@ -12,19 +12,29 @@ import org10x10.dam.game.Move;
  * @author huub
  */
 public class OptimisticPlayer extends DraughtsPlayer {
+    private int value;
 
     public OptimisticPlayer() {
         super(UninformedPlayer.class.getResource("resources/optimist.png"));
     }
+    
     @Override
     /** @return a random move **/
     public Move getMove(DraughtsState s) {
         List<Move> moves = s.getMoves();
+        
+        // determine move
+        
+        this.value = this.computeValue(moves.get(0));
         return moves.get(0);
     }
 
     @Override
     public Integer getValue() {
+        return this.value;
+    }
+    
+    private int computeValue(Move move) {
         return 0;
     }
 }
