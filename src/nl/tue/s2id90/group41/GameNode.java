@@ -5,6 +5,8 @@
  */
 package nl.tue.s2id90.group41;
 
+import java.util.ArrayList;
+import java.util.List;
 import nl.tue.s2id90.draughts.DraughtsState;
 import org10x10.dam.game.Move;
 
@@ -30,5 +32,19 @@ public class GameNode {
     
     public Move getBestMove() {
         return this.move;
+    }
+    
+    public List<GameNode> getSuccessors() {
+        ArrayList<GameNode> result = new ArrayList<>();
+        
+        state.getMoves().stream().map((mv) -> {
+            DraughtsState clone = this.state.clone();
+            clone.doMove(mv);
+            return clone;
+        }).forEach((newState) -> {
+            result.add(new GameNode(newState));
+        });
+        
+        return result;
     }
 }
