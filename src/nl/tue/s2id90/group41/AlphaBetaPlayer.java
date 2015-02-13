@@ -10,7 +10,9 @@ import nl.tue.s2id90.draughts.player.DraughtsPlayer;
 import org10x10.dam.game.Move;
 
 /**
- *
+ * TODO: Store move only in outermost alphabeta call
+ *       Return ratings
+ *       side Factor updated per alphabetacall
  * @author Janis Fliegenschmidt
  */
 public class AlphaBetaPlayer extends DraughtsPlayer {
@@ -30,8 +32,14 @@ public class AlphaBetaPlayer extends DraughtsPlayer {
     public Integer getValue() {
         return this.value;
     }
+    
+    private int sideFactor = 1; // 1= Black, -1 = white
 
     private Move AlphaBeta(DraughtsState state) {
+        if (state.isWhiteToMove()) {
+            this.sideFactor = -1;
+        }
+        
         GameNode node = new GameNode(state);
         AlphaBetaMax(node, Integer.MIN_VALUE, Integer.MAX_VALUE, 0);
         return node.getBestMove();
@@ -104,6 +112,7 @@ public class AlphaBetaPlayer extends DraughtsPlayer {
                     break;
             }
         }
-        return rating;
+        
+        return rating * this.sideFactor;
     }
 }
