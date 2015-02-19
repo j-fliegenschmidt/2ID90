@@ -74,9 +74,9 @@ public abstract class AlphaBetaPlayer extends DraughtsPlayer {
             
             node.getState().undoMove(move);
 
-            /*if (alpha >= beta) {
+            if (alpha >= beta) {
                 return beta;
-            }*/ 
+            }
         }
 
         return alpha;
@@ -97,9 +97,9 @@ public abstract class AlphaBetaPlayer extends DraughtsPlayer {
 
             node.getState().undoMove(move);
 
-            /* if (beta <= alpha) {
+            if (beta <= alpha) {
                 return alpha;
-            } */
+            }
         }
 
         return beta;
