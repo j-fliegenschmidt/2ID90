@@ -10,12 +10,9 @@ import nl.tue.s2id90.draughts.player.DraughtsPlayer;
 import org10x10.dam.game.Move;
 
 /**
- * TODO: Store move only in outermost alphabeta call
- *       Return ratings
- *       side Factor updated per alphabetacall
  * @author Janis Fliegenschmidt
  */
-public class AlphaBetaPlayer extends DraughtsPlayer {
+public abstract class AlphaBetaPlayer extends DraughtsPlayer {
 
     private int value;
 
@@ -33,86 +30,80 @@ public class AlphaBetaPlayer extends DraughtsPlayer {
         return this.value;
     }
     
-    private int sideFactor = 1; // 1= Black, -1 = white
+    private static final int BLACK_MOVE = 1;
+    private static final int WHITE_MOVE = -1;
 
     private Move AlphaBeta(DraughtsState state) {
-        if (state.isWhiteToMove()) {
-            this.sideFactor = -1;
-        }
+        int side = state.isWhiteToMove() ? WHITE_MOVE : BLACK_MOVE;
         
         GameNode node = new GameNode(state);
-        AlphaBetaMax(node, Integer.MIN_VALUE, Integer.MAX_VALUE, 0);
+        this.value = AlphaBeta(node, Integer.MIN_VALUE, Integer.MAX_VALUE, side);
         return node.getBestMove();
     }
 
-    private int alphaBetaDepth = 5;
-
-    private int AlphaBetaMax(GameNode node, int alpha, int beta, int depth) {
-        if (depth >= alphaBetaDepth) {
-            return GetRating(node);
-        }
-
+    private int alphaBetaDepth = 20;
+    
+    private int AlphaBeta(GameNode node, int alpha, int beta, int side) {
         for (Move move : node.getState().getMoves()) {
             node.getState().doMove(move);
             
-            int tmp = AlphaBetaMin(node, alpha, beta, ++depth);
+            int tmp = AlphaBetaMin(node, alpha, beta, -1 * side, 0);
             if (tmp > alpha) {
                 alpha = tmp;
                 node.setBestMove(move);
             }
             
             node.getState().undoMove(move);
+        }
 
-            if (alpha >= beta) {
-                return beta;
+        return alpha;       
+    }
+
+    private int AlphaBetaMax(GameNode node, int alpha, int beta, int side, int depth) {        
+        if (depth >= alphaBetaDepth || node.getState().isEndState()) {
+            return GetRating(node, side);
+        }
+
+        for (Move move : node.getState().getMoves()) {
+            node.getState().doMove(move);
+            
+            int tmp = AlphaBetaMin(node, alpha, beta, -1 * side, ++depth);
+            if (tmp > alpha) {
+                alpha = tmp;
             }
+            
+            node.getState().undoMove(move);
+
+            /*if (alpha >= beta) {
+                return beta;
+            }*/ 
         }
 
         return alpha;
     }
 
-    private int AlphaBetaMin(GameNode node, int alpha, int beta, int depth) {
-        if (depth >= alphaBetaDepth) {
-            return GetRating(node);
+    private int AlphaBetaMin(GameNode node, int alpha, int beta, int side, int depth) {
+        if (depth >= alphaBetaDepth || node.getState().isEndState()) {
+            return GetRating(node, side);
         }
 
         for (Move move : node.getState().getMoves()) {
             node.getState().doMove(move);
 
-            int tmp = AlphaBetaMax(node, alpha, beta, ++depth);
+            int tmp = AlphaBetaMax(node, alpha, beta, -1 * side, ++depth);
             if (tmp < beta) {
                 beta = tmp;
-                node.setBestMove(move);
             }
-            
-            beta = tmp > beta ? beta : tmp;
 
             node.getState().undoMove(move);
 
-            if (beta >= alpha) {
+            /* if (beta <= alpha) {
                 return alpha;
-            }
+            } */
         }
 
         return beta;
     }
 
-    private int GetRating(GameNode node) {
-        int rating = 0;
-        for (int piece : node.getState().getPieces()) {
-            switch (piece) {
-                case DraughtsState.BLACKKING:
-                case DraughtsState.BLACKPIECE:
-                    ++rating;
-                    break;
-
-                case DraughtsState.WHITEKING:
-                case DraughtsState.WHITEPIECE:
-                    --rating;
-                    break;
-            }
-        }
-        
-        return rating * this.sideFactor;
-    }
+    public abstract int GetRating(GameNode node, int side);
 }

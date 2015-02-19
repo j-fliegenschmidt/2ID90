@@ -23,6 +23,8 @@ public class FirstAttemptPlayer extends DraughtsPlayer {
     public Move getMove(DraughtsState draughtsState) {
         List<Move> moves = draughtsState.getMoves();
         
+        int side = draughtsState.isWhiteToMove() ? -1 : 1;
+        
         RatedMove ratedMove = null;
         for (Move move : moves) {
             draughtsState.doMove(move);
@@ -33,12 +35,12 @@ public class FirstAttemptPlayer extends DraughtsPlayer {
                 switch (piece) {
                     case DraughtsState.BLACKKING:
                     case DraughtsState.BLACKPIECE:
-                        ++rating;
+                        rating += side;
                         break;
                         
                     case DraughtsState.WHITEKING:
                     case DraughtsState.WHITEPIECE:
-                        --rating;
+                        rating -= side;
                         break;
                 }
             }
