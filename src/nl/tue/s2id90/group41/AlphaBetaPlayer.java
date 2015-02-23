@@ -10,6 +10,8 @@ import nl.tue.s2id90.draughts.player.DraughtsPlayer;
 import org10x10.dam.game.Move;
 
 /**
+ * Call Min/Max first depending on color. (TODO)
+ *
  * @author Janis Fliegenschmidt
  */
 public abstract class AlphaBetaPlayer extends DraughtsPlayer {
@@ -29,49 +31,60 @@ public abstract class AlphaBetaPlayer extends DraughtsPlayer {
     public Integer getValue() {
         return this.value;
     }
-    
-    private static final int BLACK_MOVE = 1;
-    private static final int WHITE_MOVE = -1;
 
     private Move AlphaBeta(DraughtsState state) {
-        int side = state.isWhiteToMove() ? WHITE_MOVE : BLACK_MOVE;
-        
         GameNode node = new GameNode(state);
-        this.value = AlphaBeta(node, Integer.MIN_VALUE, Integer.MAX_VALUE, side);
+        this.value = AlphaBeta(node, Integer.MIN_VALUE, Integer.MAX_VALUE);
         return node.getBestMove();
     }
 
-    private int alphaBetaDepth = 20;
-    
-    private int AlphaBeta(GameNode node, int alpha, int beta, int side) {
-        for (Move move : node.getState().getMoves()) {
-            node.getState().doMove(move);
-            
-            int tmp = AlphaBetaMin(node, alpha, beta, -1 * side, 0);
-            if (tmp > alpha) {
-                alpha = tmp;
-                node.setBestMove(move);
-            }
-            
-            node.getState().undoMove(move);
-        }
+    private final int alphaBetaDepth = 10;
 
-        return alpha;       
+    private int AlphaBeta(GameNode node, int alpha, int beta) {
+        if (node.getState().isWhiteToMove()) {
+            for (Move move : node.getState().getMoves()) {
+                node.getState().doMove(move);
+
+                int tmp = AlphaBetaMin(node, alpha, beta, 0);
+                if (tmp > alpha) {
+                    alpha = tmp;
+                    node.setBestMove(move);
+                }
+
+                node.getState().undoMove(move);
+            }
+
+            return alpha;
+        } else {
+            for (Move move : node.getState().getMoves()) {
+                node.getState().doMove(move);
+
+                int tmp = AlphaBetaMax(node, alpha, beta, 0);
+                if (tmp < beta) {
+                    beta = tmp;
+                    node.setBestMove(move);
+                }
+
+                node.getState().undoMove(move);
+            }
+
+            return beta;
+        }
     }
 
-    private int AlphaBetaMax(GameNode node, int alpha, int beta, int side, int depth) {        
-        if (depth >= alphaBetaDepth || node.getState().isEndState()) {
-            return GetRating(node, side);
+    private int AlphaBetaMax(GameNode node, int alpha, int beta, int depth) {
+        if (depth >= this.alphaBetaDepth || node.getState().isEndState()) {
+            return GetRating(node);
         }
 
         for (Move move : node.getState().getMoves()) {
             node.getState().doMove(move);
-            
-            int tmp = AlphaBetaMin(node, alpha, beta, -1 * side, ++depth);
+
+            int tmp = AlphaBetaMin(node, alpha, beta, ++depth);
             if (tmp > alpha) {
                 alpha = tmp;
             }
-            
+
             node.getState().undoMove(move);
 
             if (alpha >= beta) {
@@ -82,15 +95,15 @@ public abstract class AlphaBetaPlayer extends DraughtsPlayer {
         return alpha;
     }
 
-    private int AlphaBetaMin(GameNode node, int alpha, int beta, int side, int depth) {
-        if (depth >= alphaBetaDepth || node.getState().isEndState()) {
-            return GetRating(node, side);
+    private int AlphaBetaMin(GameNode node, int alpha, int beta, int depth) {
+        if (depth >= this.alphaBetaDepth || node.getState().isEndState()) {
+            return GetRating(node);
         }
 
         for (Move move : node.getState().getMoves()) {
             node.getState().doMove(move);
 
-            int tmp = AlphaBetaMax(node, alpha, beta, -1 * side, ++depth);
+            int tmp = AlphaBetaMax(node, alpha, beta, ++depth);
             if (tmp < beta) {
                 beta = tmp;
             }
@@ -105,5 +118,5 @@ public abstract class AlphaBetaPlayer extends DraughtsPlayer {
         return beta;
     }
 
-    public abstract int GetRating(GameNode node, int side);
+    public abstract int GetRating(GameNode node);
 }

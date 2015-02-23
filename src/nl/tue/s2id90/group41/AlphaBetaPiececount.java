@@ -13,18 +13,18 @@ import nl.tue.s2id90.draughts.DraughtsState;
  */
 public class AlphaBetaPiececount extends AlphaBetaPlayer {
     @Override
-    public int GetRating(GameNode node, int side) {
+    public int GetRating(GameNode node) {
         int rating = 0;
         for (int piece : node.getState().getPieces()) {
             switch (piece) {
                 case DraughtsState.BLACKKING:
                 case DraughtsState.BLACKPIECE:
-                    rating += side;
+                    ++rating;
                     break;
 
                 case DraughtsState.WHITEKING:
                 case DraughtsState.WHITEPIECE:
-                    rating -= side;
+                    --rating;
                     break;
             }
         }
