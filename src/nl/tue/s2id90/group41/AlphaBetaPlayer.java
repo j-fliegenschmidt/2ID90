@@ -32,18 +32,23 @@ public abstract class AlphaBetaPlayer extends DraughtsPlayer {
 
     private Move AlphaBeta(DraughtsState state) {
         GameNode node = new GameNode(state);
-        this.value = AlphaBeta(node, Integer.MIN_VALUE, Integer.MAX_VALUE);
+
+        int depth = 0;
+        do {
+            this.value = AlphaBeta(node, Integer.MIN_VALUE, Integer.MAX_VALUE, depth++);
+        } while (depth < alphaBetaDepth);
+
         return node.getBestMove();
     }
 
     private final int alphaBetaDepth = 10;
 
-    private int AlphaBeta(GameNode node, int alpha, int beta) {
+    private int AlphaBeta(GameNode node, int alpha, int beta, int depth) {
         if (node.getState().isWhiteToMove()) {
             for (Move move : node.getState().getMoves()) {
                 node.getState().doMove(move);
 
-                int tmp = AlphaBetaMax(node, alpha, beta, 0);
+                int tmp = AlphaBetaMax(node, alpha, beta, depth);
                 if (tmp < beta) {
                     beta = tmp;
                     node.setBestMove(move);
@@ -57,7 +62,7 @@ public abstract class AlphaBetaPlayer extends DraughtsPlayer {
             for (Move move : node.getState().getMoves()) {
                 node.getState().doMove(move);
 
-                int tmp = AlphaBetaMin(node, alpha, beta, 0);
+                int tmp = AlphaBetaMin(node, alpha, beta, depth);
                 if (tmp > alpha) {
                     alpha = tmp;
                     node.setBestMove(move);
@@ -71,14 +76,14 @@ public abstract class AlphaBetaPlayer extends DraughtsPlayer {
     }
 
     private int AlphaBetaMax(GameNode node, int alpha, int beta, int depth) {
-        if (depth >= this.alphaBetaDepth || node.getState().isEndState()) {
+        if (depth <= 0 || node.getState().isEndState()) {
             return GetRating(node);
         }
 
         for (Move move : node.getState().getMoves()) {
             node.getState().doMove(move);
 
-            int tmp = AlphaBetaMin(node, alpha, beta, ++depth);
+            int tmp = AlphaBetaMin(node, alpha, beta, --depth);
             if (tmp > alpha) {
                 alpha = tmp;
             }
@@ -94,14 +99,14 @@ public abstract class AlphaBetaPlayer extends DraughtsPlayer {
     }
 
     private int AlphaBetaMin(GameNode node, int alpha, int beta, int depth) {
-        if (depth >= this.alphaBetaDepth || node.getState().isEndState()) {
+        if (depth <= 0 || node.getState().isEndState()) {
             return GetRating(node);
         }
 
         for (Move move : node.getState().getMoves()) {
             node.getState().doMove(move);
 
-            int tmp = AlphaBetaMax(node, alpha, beta, ++depth);
+            int tmp = AlphaBetaMax(node, alpha, beta, --depth);
             if (tmp < beta) {
                 beta = tmp;
             }
