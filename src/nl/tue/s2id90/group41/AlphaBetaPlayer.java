@@ -10,8 +10,6 @@ import nl.tue.s2id90.draughts.player.DraughtsPlayer;
 import org10x10.dam.game.Move;
 
 /**
- * Call Min/Max first depending on color. (TODO)
- *
  * @author Janis Fliegenschmidt
  */
 public abstract class AlphaBetaPlayer extends DraughtsPlayer {
@@ -45,20 +43,6 @@ public abstract class AlphaBetaPlayer extends DraughtsPlayer {
             for (Move move : node.getState().getMoves()) {
                 node.getState().doMove(move);
 
-                int tmp = AlphaBetaMin(node, alpha, beta, 0);
-                if (tmp > alpha) {
-                    alpha = tmp;
-                    node.setBestMove(move);
-                }
-
-                node.getState().undoMove(move);
-            }
-
-            return alpha;
-        } else {
-            for (Move move : node.getState().getMoves()) {
-                node.getState().doMove(move);
-
                 int tmp = AlphaBetaMax(node, alpha, beta, 0);
                 if (tmp < beta) {
                     beta = tmp;
@@ -69,6 +53,20 @@ public abstract class AlphaBetaPlayer extends DraughtsPlayer {
             }
 
             return beta;
+        } else {
+            for (Move move : node.getState().getMoves()) {
+                node.getState().doMove(move);
+
+                int tmp = AlphaBetaMin(node, alpha, beta, 0);
+                if (tmp > alpha) {
+                    alpha = tmp;
+                    node.setBestMove(move);
+                }
+
+                node.getState().undoMove(move);
+            }
+
+            return alpha;
         }
     }
 
