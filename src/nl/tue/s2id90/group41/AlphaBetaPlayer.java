@@ -48,18 +48,24 @@ public abstract class AlphaBetaPlayer extends DraughtsPlayer {
         Move move = null;
         int tempValue = Integer.MIN_VALUE;
         int depth = 0;
-        do {
-            move = node.getBestMove();
-            this.value = tempValue;
-            tempValue = AlphaBeta(node, Integer.MIN_VALUE, Integer.MAX_VALUE, depth++);
-        } while (!this.IsStopped());
+        try {
+            do {
+                move = node.getBestMove();
+                this.value = tempValue;
+                tempValue = AlphaBeta(node, Integer.MIN_VALUE, Integer.MAX_VALUE, depth++);
+            } while (!this.IsStopped());
+        } catch (AIStoppedException aise) {
+            /* It's ok. Swallow it whole. */
+            LOG.log(Level.INFO, "AlphaBetaPlayer stopped.");
+        }
 
         LOG.log(Level.INFO, "Search depth achieved: {0}", --depth);
 
         return move;
     }
 
-    private int AlphaBeta(GameNode node, int alpha, int beta, int depth) {
+    private int AlphaBeta(GameNode node, int alpha, int beta, int depth)
+            throws AIStoppedException {
         if (node.getState().isWhiteToMove()) {
             for (Move move : node.getState().getMoves()) {
                 node.getState().doMove(move);
@@ -91,8 +97,13 @@ public abstract class AlphaBetaPlayer extends DraughtsPlayer {
         }
     }
 
-    private int AlphaBetaMax(GameNode node, int alpha, int beta, int depth) {
-        if (depth <= 0 || node.getState().isEndState() || this.IsStopped()) {
+    private int AlphaBetaMax(GameNode node, int alpha, int beta, int depth)
+            throws AIStoppedException {
+        if (this.IsStopped()) {
+            throw new AIStoppedException();
+        }
+
+        if (depth <= 0 || node.getState().isEndState()) {
             return GetRating(node);
         }
 
@@ -114,8 +125,13 @@ public abstract class AlphaBetaPlayer extends DraughtsPlayer {
         return alpha;
     }
 
-    private int AlphaBetaMin(GameNode node, int alpha, int beta, int depth) {
-        if (depth <= 0 || node.getState().isEndState() || this.IsStopped()) {
+    private int AlphaBetaMin(GameNode node, int alpha, int beta, int depth)
+            throws AIStoppedException {
+        if (this.IsStopped()) {
+            throw new AIStoppedException();
+        }
+
+        if (depth <= 0 || node.getState().isEndState()) {
             return GetRating(node);
         }
 
