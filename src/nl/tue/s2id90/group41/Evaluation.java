@@ -64,7 +64,7 @@ public class Evaluation extends AlphaBetaPlayer {
         }
         
         for (int i = 46; i < 51; i++) {
-            if (piece[i] == DraughtsState.BLACKPIECE) {
+            if (piece[i] == DraughtsState.WHITEPIECE) {
                 --rating;
             }
         }
