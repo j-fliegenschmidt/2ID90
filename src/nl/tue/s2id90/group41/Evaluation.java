@@ -17,10 +17,15 @@ public class Evaluation extends AlphaBetaPlayer {
        DraughtsState state = node.getState();
        int rating = 0;
        
-       rating += pieceCount(state);
-       rating += kingDefense(state);
-       rating += midDomination(state);
-       rating += enMasse(state) * 0.5;
+       rating += pieceCount(state) * 5; // this is the most important thing to keep an eye out for
+       rating += kingDefense(state) * 7; // this can hardly be overrated, and will rarely conflict
+                                         // the piececount
+       rating += midDomination(state); // this is great, but it should never 
+                                       // lead to our player letting its pieces 
+                                       // get force captured to keep the enemy 
+                                       // out of the middle
+       rating += enMasse(state) * 2; // This needs to have higher rating than mid domination,
+                                     // for similar reasons. You can't dominate mid wihout backup
        
        return rating;
     }
