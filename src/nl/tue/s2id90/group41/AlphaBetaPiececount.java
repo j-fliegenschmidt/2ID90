@@ -18,11 +18,13 @@ public class AlphaBetaPiececount extends AlphaBetaPlayer {
         for (int piece : node.getState().getPieces()) {
             switch (piece) {
                 case DraughtsState.BLACKKING:
+                    ++rating;
                 case DraughtsState.BLACKPIECE:
                     ++rating;
                     break;
 
                 case DraughtsState.WHITEKING:
+                    --rating;
                 case DraughtsState.WHITEPIECE:
                     --rating;
                     break;

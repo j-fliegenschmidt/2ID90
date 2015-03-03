@@ -22,7 +22,7 @@ public abstract class AlphaBetaPlayer extends DraughtsPlayer {
     private boolean stopped;
 
     public AlphaBetaPlayer() {
-        super(UninformedPlayer.class.getResource("resources/optimist.png"));
+        super(UninformedPlayer.class.getResource("resources/otto2.png"));
     }
 
     @Override
