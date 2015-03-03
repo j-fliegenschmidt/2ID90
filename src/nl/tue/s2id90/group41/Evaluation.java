@@ -106,7 +106,7 @@ public class Evaluation extends AlphaBetaPlayer {
         //pattern for the TL, TR, BR, BL for 7,8,9,10 etc
         List<Integer> pattern1 = Arrays.asList(-6,-5,5,4);
         
-        //pattern for the TL, TR, BR, BL for 7,8,9,10 etc
+        //pattern for the TL, TR, BR, BL for 11,12,13,14 etc
         List<Integer> pattern2 = Arrays.asList(-5,-4,6,5);
         
         //excludes border nodes, focus on center nodes
@@ -116,9 +116,9 @@ public class Evaluation extends AlphaBetaPlayer {
             for (int j = i + 7; j < i + 11; j++) {
                 int foo = piece[j];
                 if (evalBlackPiece(foo)) {
-                    rating += enMasseBlack(pattern1, foo, piece);
+                    rating += enMasseBlack(pattern1, j, piece);
                 } else if (evalWhitePiece(foo)) {
-                    rating -= enMasseWhite(pattern1, foo, piece);
+                    rating -= enMasseWhite(pattern1, j, piece);
                 }
             }
             
@@ -126,9 +126,9 @@ public class Evaluation extends AlphaBetaPlayer {
             for (int k = i + 11; k < i + 15; k++) {
                 int bar = piece[k];
                 if (evalBlackPiece(bar)) {
-                    rating += enMasseBlack(pattern2, bar, piece);
+                    rating += enMasseBlack(pattern2, k, piece);
                 } else if (evalWhitePiece(bar)) {
-                    rating -= enMasseWhite(pattern2, bar, piece);
+                    rating -= enMasseWhite(pattern2, k, piece);
                 }
             }      
         }
