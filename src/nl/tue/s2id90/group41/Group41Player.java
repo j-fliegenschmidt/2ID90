@@ -12,7 +12,7 @@ import nl.tue.s2id90.draughts.DraughtsState;
  *
  * @author alexau
  */
-public class Evaluation extends AlphaBetaPlayer {
+public class Group41Player extends AlphaBetaPlayer {
 
     @Override
     public int GetRating(GameNode node) {

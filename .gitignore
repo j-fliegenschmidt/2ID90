@@ -2,3 +2,4 @@ build/
 lib/
 dist/
 nbproject/private/private.xml
+nbproject/private/
